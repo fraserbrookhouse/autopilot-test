@@ -131,9 +131,9 @@ jobs:
             Be concise. Use inline comments for specific issues.
             If everything looks good, say so briefly — don't invent problems.
           claude_args: |
-            --max-turns 5
+            --max-turns 10
             --model claude-sonnet-4-20250514
-            --allowedTools "Read,Glob,Grep"
+            --allowedTools "Bash(git diff *),Bash(git log *),Read,Glob,Grep"
 
   # ── Job 4: Auto-fix CI failures ──
   fix-ci:
