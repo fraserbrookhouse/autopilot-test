@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  <defs>
+    <!-- Rainbow gradient for the arc -->
+    <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E53E3E"/>
+      <stop offset="16%" stop-color="#ED8936"/>
+      <stop offset="33%" stop-color="#ECC94B"/>
+      <stop offset="50%" stop-color="#48BB78"/>
+      <stop offset="66%" stop-color="#4299E1"/>
+      <stop offset="83%" stop-color="#667EEA"/>
+      <stop offset="100%" stop-color="#9F7AEA"/>
+    </linearGradient>
+    <!-- Subtle shadow filter -->
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#1a365d" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Rainbow arc mark -->
+  <g transform="translate(10, 8)">
+    <!-- Outer rainbow arc -->
+    <path d="M 4 70 A 38 38 0 0 1 80 70" fill="none" stroke="url(#rainbow)" stroke-width="7" stroke-linecap="round"/>
+    <!-- Inner subtle arc (white/light) to give depth -->
+    <path d="M 14 70 A 28 28 0 0 1 70 70" fill="none" stroke="url(#rainbow)" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+    <!-- Small rising bars underneath the arc representing growth/impact -->
+    <rect x="22" y="52" width="6" height="18" rx="3" fill="#4299E1" opacity="0.8"/>
+    <rect x="33" y="44" width="6" height="26" rx="3" fill="#667EEA" opacity="0.8"/>
+    <rect x="44" y="36" width="6" height="34" rx="3" fill="#5A67D8" opacity="0.8"/>
+    <rect x="55" y="42" width="6" height="28" rx="3" fill="#667EEA" opacity="0.8"/>
+  </g>
+
+  <!-- Text: "Social Value" -->
+  <text x="105" y="45" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" font-weight="800" fill="#1A365D" letter-spacing="-0.5">
+    Social Value
+  </text>
+
+  <!-- Text: "Portal" -->
+  <text x="105" y="78" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" font-weight="800" fill="#4299E1" letter-spacing="-0.5">
+    Portal
+  </text>
+
+  <!-- Small tagline -->
+  <text x="107" y="94" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="10" font-weight="500" fill="#718096" letter-spacing="2">
+    MEASURE · REPORT · MAXIMISE
+  </text>
+</svg>
