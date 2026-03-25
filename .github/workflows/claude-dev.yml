@@ -1,0 +1,37 @@
+# Claude Code Auto-Development GitHub Action
+# This workflow triggers when the "claude-dev" label is added to an issue.
+# Claude Code reads the issue, implements the feature, and creates a PR.
+#
+# REQUIRED SECRETS:
+#   ANTHROPIC_API_KEY - Your Anthropic API key (from https://console.anthropic.com/)
+#
+# REQUIRED GITHUB APP:
+#   Install the Claude GitHub App: https://github.com/apps/claude
+
+name: Claude Dev
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+
+jobs:
+  develop:
+    if: github.event.label.name == 'claude-dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          label_trigger: "claude-dev"
