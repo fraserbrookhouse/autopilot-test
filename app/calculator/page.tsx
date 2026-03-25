@@ -14,7 +14,8 @@ import {
   ArrowLeft,
   Target,
   Award,
-  BarChart3
+  BarChart3,
+  type LucideIcon
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -125,13 +126,8 @@ export default function Calculator() {
 
   const breakdown = calculateBreakdown()
   const totalWeightedScore = Object.values(breakdown).reduce((sum, metric) => sum + metric.weightedScore, 0)
-  const totalPossibleScore = Object.values(breakdown).reduce((sum, metric) => sum + metric.maxPoints, 0) * 0.10 +
-                            Object.values(breakdown).reduce((sum, metric) => sum + metric.maxPoints, 0) * 0.15 +
-                            Object.values(breakdown).reduce((sum, metric) => sum + metric.maxPoints, 0) * 0.15 +
-                            Object.values(breakdown).reduce((sum, metric) => sum + metric.maxPoints, 0) * 0.15 +
-                            Object.values(breakdown).reduce((sum, metric) => sum + metric.maxPoints, 0) * 0.20 +
-                            Object.values(breakdown).reduce((sum, metric) => sum + metric.maxPoints, 0) * 0.25
-  const overallPercentage = (totalWeightedScore / 10) * 100
+  const totalPossibleScore = 10 // Maximum possible weighted score (all weightings sum to 1.0)
+  const overallPercentage = (totalWeightedScore / totalPossibleScore) * 100
 
   const getOverallGrade = () => {
     if (overallPercentage >= 80) return { grade: 'Excellent', color: 'green' }
@@ -156,7 +152,7 @@ export default function Calculator() {
     metric
   }: {
     title: string
-    icon: any
+    icon: LucideIcon
     value: number
     onChange: (value: number) => void
     unit: string
@@ -191,10 +187,17 @@ export default function Calculator() {
           <div className="relative">
             <input
               type="number"
-              value={value || ''}
+              value={value === 0 ? '' : value}
               onChange={(e) => {
-                const val = e.target.value === '' ? 0 : Number(e.target.value)
+                const val = e.target.value === '' ? 0 : parseFloat(e.target.value) || 0
                 onChange(val)
+              }}
+              onBlur={(e) => {
+                // Ensure we have a valid number on blur
+                const val = e.target.value === '' ? 0 : parseFloat(e.target.value) || 0
+                if (val !== value) {
+                  onChange(val)
+                }
               }}
               className="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               min="0"
@@ -255,7 +258,7 @@ export default function Calculator() {
           <div className="text-center">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-blue-200 hover:text-white transition-colors mb-6"
+              className="inline-flex items-center gap-2 text-blue-200 hover:text-white transition-colors mb-10"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Home
