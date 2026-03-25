@@ -75,7 +75,7 @@ jobs:
 
             After implementing, commit and push your changes. The PR will be created automatically by a later workflow step — do NOT create a PR yourself.
           claude_args: |
-            --max-turns 25
+            --max-turns 40
             --model claude-sonnet-4-20250514
             --allowedTools "Bash(git *),Bash(npm *),Bash(npx *),Bash(node *),Bash(cat *),Bash(ls *),Bash(find *),Edit,Read,Write,Glob,Grep"
 
