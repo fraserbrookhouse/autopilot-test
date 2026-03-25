@@ -8,7 +8,9 @@ import {
   BookOpen,
   Target,
   ArrowRight,
-  Calculator
+  Calculator,
+  Brain,
+  Play
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -265,6 +267,61 @@ export default function Home() {
               <p className="text-gray-600 leading-relaxed">
                 Build long-term value through sustainable social impact initiatives.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Value Quiz Game Section */}
+      <section className="py-20 md:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 p-8 md:p-12 shadow-xl ring-1 ring-purple-200 relative overflow-hidden">
+              {/* Decorative Elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-400 rounded-full mix-blend-multiply blur-2xl opacity-30"></div>
+              <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-400 rounded-full mix-blend-multiply blur-2xl opacity-30"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-blue-300 rounded-full mix-blend-multiply blur-xl opacity-20"></div>
+
+              <div className="relative text-center text-white">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-6">
+                  <Brain className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                  Test Your Social Value Knowledge
+                </h2>
+                <p className="text-lg md:text-xl text-purple-100 leading-relaxed mb-8 max-w-2xl mx-auto">
+                  Take our interactive quiz to discover how well you understand social value in UK procurement.
+                  Learn key concepts while testing your knowledge across 10 engaging questions.
+                </p>
+
+                <div className="grid md:grid-cols-3 gap-6 mb-8">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white mb-1">10</div>
+                    <div className="text-purple-200">Questions</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white mb-1">5</div>
+                    <div className="text-purple-200">Minutes</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white mb-1">✓</div>
+                    <div className="text-purple-200">Free</div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <a
+                    href="/game"
+                    className="inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-semibold text-purple-600 shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
+                  >
+                    <Play className="w-5 h-5" />
+                    Start Quiz Now
+                  </a>
+                  <button className="rounded-full border-2 border-purple-200 px-8 py-4 text-sm font-semibold text-white transition-all hover:bg-purple-200 hover:text-purple-600">
+                    Learn More First
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
