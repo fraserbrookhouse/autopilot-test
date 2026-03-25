@@ -53,6 +53,7 @@ jobs:
           fetch-depth: 1
 
       - name: Implement feature
+        id: claude-develop
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -68,6 +69,47 @@ jobs:
             --max-turns 25
             --model claude-sonnet-4-20250514
             --allowedTools "Bash(git *),Bash(npm *),Bash(npx *),Bash(node *),Bash(cat *),Bash(ls *),Bash(find *),Bash(gh *),Edit,Read,Write,Glob,Grep"
+
+      - name: Report cost
+        if: always() && steps.claude-develop.outputs.execution_file
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const execFile = '${{ steps.claude-develop.outputs.execution_file }}';
+            if (!fs.existsSync(execFile)) return;
+            const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
+            let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            for (const msg of log) {
+              if (msg.usage) {
+                inputTokens += msg.usage.input_tokens || 0;
+                outputTokens += msg.usage.output_tokens || 0;
+                cacheRead += msg.usage.cache_read_input_tokens || 0;
+                cacheCreation += msg.usage.cache_creation_input_tokens || 0;
+              }
+              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+            }
+            // Sonnet pricing: $3/M input, $15/M output, $0.30/M cache read, $3.75/M cache write
+            const inputCost = (inputTokens / 1_000_000) * 3;
+            const outputCost = (outputTokens / 1_000_000) * 15;
+            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
+            const model = process.env.MODEL_USED || 'unknown';
+            const body = `**💰 Claude Run Cost Report** (develop)\n\n` +
+              `| Metric | Value |\n|--------|-------|\n` +
+              `| Model | \`${model}\` |\n` +
+              `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
+              `| Output tokens | ${outputTokens.toLocaleString()} |\n` +
+              `| Cache read | ${cacheRead.toLocaleString()} |\n` +
+              `| Cache creation | ${cacheCreation.toLocaleString()} |\n` +
+              `| **Estimated cost** | **$${totalCost.toFixed(4)}** |\n`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
 
   # ── Job 2: Respond to @claude mentions in comments ──
   respond:
@@ -89,6 +131,7 @@ jobs:
           fetch-depth: 1
 
       - name: Respond to feedback
+        id: claude-respond
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -96,6 +139,46 @@ jobs:
           claude_args: |
             --max-turns 15
             --model claude-sonnet-4-20250514
+
+      - name: Report cost
+        if: always() && steps.claude-respond.outputs.execution_file
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const execFile = '${{ steps.claude-respond.outputs.execution_file }}';
+            if (!fs.existsSync(execFile)) return;
+            const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
+            let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            for (const msg of log) {
+              if (msg.usage) {
+                inputTokens += msg.usage.input_tokens || 0;
+                outputTokens += msg.usage.output_tokens || 0;
+                cacheRead += msg.usage.cache_read_input_tokens || 0;
+                cacheCreation += msg.usage.cache_creation_input_tokens || 0;
+              }
+              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+            }
+            const inputCost = (inputTokens / 1_000_000) * 3;
+            const outputCost = (outputTokens / 1_000_000) * 15;
+            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
+            const model = process.env.MODEL_USED || 'unknown';
+            const body = `**💰 Claude Run Cost Report** (respond)\n\n` +
+              `| Metric | Value |\n|--------|-------|\n` +
+              `| Model | \`${model}\` |\n` +
+              `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
+              `| Output tokens | ${outputTokens.toLocaleString()} |\n` +
+              `| Cache read | ${cacheRead.toLocaleString()} |\n` +
+              `| Cache creation | ${cacheCreation.toLocaleString()} |\n` +
+              `| **Estimated cost** | **$${totalCost.toFixed(4)}** |\n`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
 
   # ── Job 3: Auto-review new PRs ──
   review:
@@ -117,6 +200,7 @@ jobs:
           fetch-depth: 0
 
       - name: Review PR
+        id: claude-review
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -134,6 +218,46 @@ jobs:
             --max-turns 10
             --model claude-sonnet-4-20250514
             --allowedTools "Bash(git diff *),Bash(git log *),Read,Glob,Grep"
+
+      - name: Report cost
+        if: always() && steps.claude-review.outputs.execution_file
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const execFile = '${{ steps.claude-review.outputs.execution_file }}';
+            if (!fs.existsSync(execFile)) return;
+            const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
+            let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            for (const msg of log) {
+              if (msg.usage) {
+                inputTokens += msg.usage.input_tokens || 0;
+                outputTokens += msg.usage.output_tokens || 0;
+                cacheRead += msg.usage.cache_read_input_tokens || 0;
+                cacheCreation += msg.usage.cache_creation_input_tokens || 0;
+              }
+              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+            }
+            const inputCost = (inputTokens / 1_000_000) * 3;
+            const outputCost = (outputTokens / 1_000_000) * 15;
+            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
+            const model = process.env.MODEL_USED || 'unknown';
+            const body = `**💰 Claude Run Cost Report** (review)\n\n` +
+              `| Metric | Value |\n|--------|-------|\n` +
+              `| Model | \`${model}\` |\n` +
+              `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
+              `| Output tokens | ${outputTokens.toLocaleString()} |\n` +
+              `| Cache read | ${cacheRead.toLocaleString()} |\n` +
+              `| Cache creation | ${cacheCreation.toLocaleString()} |\n` +
+              `| **Estimated cost** | **$${totalCost.toFixed(4)}** |\n`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
 
   # ── Job 4: Auto-fix CI failures ──
   fix-ci:
@@ -158,6 +282,7 @@ jobs:
           fetch-depth: 1
 
       - name: Fix CI failure
+        id: claude-fix-ci
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -173,3 +298,52 @@ jobs:
           claude_args: |
             --max-turns 15
             --model claude-sonnet-4-20250514
+
+      - name: Report cost
+        if: always() && steps.claude-fix-ci.outputs.execution_file
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const execFile = '${{ steps.claude-fix-ci.outputs.execution_file }}';
+            if (!fs.existsSync(execFile)) return;
+            const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
+            let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            for (const msg of log) {
+              if (msg.usage) {
+                inputTokens += msg.usage.input_tokens || 0;
+                outputTokens += msg.usage.output_tokens || 0;
+                cacheRead += msg.usage.cache_read_input_tokens || 0;
+                cacheCreation += msg.usage.cache_creation_input_tokens || 0;
+              }
+              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+            }
+            const inputCost = (inputTokens / 1_000_000) * 3;
+            const outputCost = (outputTokens / 1_000_000) * 15;
+            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
+            const model = process.env.MODEL_USED || 'unknown';
+            const body = `**💰 Claude Run Cost Report** (fix-ci)\n\n` +
+              `| Metric | Value |\n|--------|-------|\n` +
+              `| Model | \`${model}\` |\n` +
+              `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
+              `| Output tokens | ${outputTokens.toLocaleString()} |\n` +
+              `| Cache read | ${cacheRead.toLocaleString()} |\n` +
+              `| Cache creation | ${cacheCreation.toLocaleString()} |\n` +
+              `| **Estimated cost** | **$${totalCost.toFixed(4)}** |\n`;
+            // Find the PR associated with this branch
+            const pulls = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${{ github.event.check_suite.head_branch }}`,
+              state: 'open'
+            });
+            if (pulls.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pulls.data[0].number,
+                body
+              });
+            }
