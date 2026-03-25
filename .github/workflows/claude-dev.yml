@@ -7,6 +7,7 @@
 #
 # REQUIRED SECRETS:
 #   ANTHROPIC_API_KEY - Your Anthropic API key (from https://console.anthropic.com/)
+#   PAT_TOKEN - Personal Access Token with repo scope (used to create PRs so they trigger review workflows)
 #
 # REQUIRED GITHUB APP:
 #   Install the Claude GitHub App: https://github.com/apps/claude
@@ -83,6 +84,7 @@ jobs:
         if: always()
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             const issue = context.payload.issue;
             const issueNum = issue.number;
