@@ -3,7 +3,7 @@ export default function Home() {
     <main style={{ fontFamily: 'system-ui, sans-serif', color: '#1A1A1A', backgroundColor: '#FFFFFF' }}>
 
       {/* Hero Section */}
-      <section style={{ backgroundColor: '#1B2A4A', color: '#FFFFFF', padding: '80px 24px', textAlign: 'center' }}>
+      <section style={{ backgroundColor: '#FFFFFF', color: '#1B2A4A', padding: '80px 24px', textAlign: 'center' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.2 }}>
             Measure, Report & Maximise Your Social Value
@@ -15,8 +15,8 @@ export default function Home() {
             href="#contact"
             style={{
               display: 'inline-block',
-              backgroundColor: '#FFFFFF',
-              color: '#1B2A4A',
+              backgroundColor: '#1B2A4A',
+              color: '#FFFFFF',
               fontWeight: 700,
               fontSize: '1rem',
               padding: '14px 36px',
@@ -156,7 +156,7 @@ export default function Home() {
       </section>
 
       {/* Call to Action */}
-      <section id="contact" style={{ padding: '80px 24px', backgroundColor: '#1B2A4A', color: '#FFFFFF', textAlign: 'center' }}>
+      <section id="contact" style={{ padding: '80px 24px', backgroundColor: '#F5F7FA', color: '#1B2A4A', textAlign: 'center' }}>
         <div style={{ maxWidth: '700px', margin: '0 auto' }}>
           <h2 style={{ fontSize: '2.25rem', fontWeight: 800, marginBottom: '20px' }}>
             Ready to Demonstrate Your Social Value?
@@ -168,8 +168,8 @@ export default function Home() {
             href="mailto:hello@socialvalueportal.com"
             style={{
               display: 'inline-block',
-              backgroundColor: '#FFFFFF',
-              color: '#1B2A4A',
+              backgroundColor: '#1B2A4A',
+              color: '#FFFFFF',
               fontWeight: 700,
               fontSize: '1rem',
               padding: '14px 40px',
@@ -185,13 +185,13 @@ export default function Home() {
             style={{
               display: 'inline-block',
               backgroundColor: 'transparent',
-              color: '#FFFFFF',
+              color: '#1B2A4A',
               fontWeight: 600,
               fontSize: '1rem',
               padding: '14px 40px',
               borderRadius: '4px',
               textDecoration: 'none',
-              border: '2px solid rgba(255,255,255,0.6)',
+              border: '2px solid #1B2A4A',
             }}
           >
             Learn More
@@ -200,7 +200,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer style={{ backgroundColor: '#111D30', color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '24px' }}>
+      <footer style={{ backgroundColor: '#1B2A4A', color: 'rgba(255,255,255,0.5)', textAlign: 'center', padding: '24px' }}>
         <p style={{ margin: 0, fontSize: '0.875rem' }}>
           © {new Date().getFullYear()} Social Value Portal. All rights reserved.
         </p>
