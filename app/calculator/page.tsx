@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import {
-  Calculator,
+  Calculator as CalculatorIcon,
   TrendingUp,
   Users,
   Briefcase,
@@ -165,8 +165,20 @@ export default function Calculator() {
   }) => (
     <div className="rounded-2xl bg-white p-6 shadow-md ring-1 ring-gray-100 transition-all hover:shadow-xl hover:-translate-y-1">
       <div className="flex items-center gap-3 mb-4">
-        <div className={`flex items-center justify-center w-10 h-10 bg-${metric.color === 'green' ? 'green' : metric.color === 'blue' ? 'blue' : metric.color === 'yellow' ? 'yellow' : 'red'}-100 rounded-xl`}>
-          <Icon className={`w-5 h-5 text-${metric.color === 'green' ? 'green' : metric.color === 'blue' ? 'blue' : metric.color === 'yellow' ? 'yellow' : 'red'}-600`} />
+        <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+          metric.color === 'green' ? 'bg-green-100' :
+          metric.color === 'blue' ? 'bg-blue-100' :
+          metric.color === 'yellow' ? 'bg-yellow-100' :
+          metric.color === 'orange' ? 'bg-orange-100' :
+          'bg-red-100'
+        }`}>
+          <Icon className={`w-5 h-5 ${
+            metric.color === 'green' ? 'text-green-600' :
+            metric.color === 'blue' ? 'text-blue-600' :
+            metric.color === 'yellow' ? 'text-yellow-600' :
+            metric.color === 'orange' ? 'text-orange-600' :
+            'text-red-600'
+          }`} />
         </div>
         <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
       </div>
@@ -192,14 +204,26 @@ export default function Calculator() {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-gray-700">Score</span>
-            <span className={`px-2 py-1 rounded-full text-xs font-semibold bg-${metric.color === 'green' ? 'green' : metric.color === 'blue' ? 'blue' : metric.color === 'yellow' ? 'yellow' : 'red'}-100 text-${metric.color === 'green' ? 'green' : metric.color === 'blue' ? 'blue' : metric.color === 'yellow' ? 'yellow' : 'red'}-800`}>
+            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+              metric.color === 'green' ? 'bg-green-100 text-green-800' :
+              metric.color === 'blue' ? 'bg-blue-100 text-blue-800' :
+              metric.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
+              metric.color === 'orange' ? 'bg-orange-100 text-orange-800' :
+              'bg-red-100 text-red-800'
+            }`}>
               {metric.grade}
             </span>
           </div>
 
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className={`h-2 rounded-full bg-${metric.color === 'green' ? 'green' : metric.color === 'blue' ? 'blue' : metric.color === 'yellow' ? 'yellow' : 'red'}-500 transition-all duration-300`}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                metric.color === 'green' ? 'bg-green-500' :
+                metric.color === 'blue' ? 'bg-blue-500' :
+                metric.color === 'yellow' ? 'bg-yellow-500' :
+                metric.color === 'orange' ? 'bg-orange-500' :
+                'bg-red-500'
+              }`}
               style={{ width: `${(metric.rawScore / 10) * 100}%` }}
             ></div>
           </div>
@@ -234,7 +258,7 @@ export default function Calculator() {
             </Link>
 
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-6">
-              <Calculator className="w-8 h-8 text-white" />
+              <CalculatorIcon className="w-8 h-8 text-white" />
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6">
@@ -265,7 +289,13 @@ export default function Calculator() {
                 {overallPercentage.toFixed(0)}%
               </div>
 
-              <div className={`inline-block px-4 py-2 rounded-full text-lg font-semibold bg-${overallGrade.color === 'green' ? 'green' : overallGrade.color === 'blue' ? 'blue' : overallGrade.color === 'yellow' ? 'yellow' : 'red'}-100 text-${overallGrade.color === 'green' ? 'green' : overallGrade.color === 'blue' ? 'blue' : overallGrade.color === 'yellow' ? 'yellow' : 'red'}-800 mb-6`}>
+              <div className={`inline-block px-4 py-2 rounded-full text-lg font-semibold mb-6 ${
+                overallGrade.color === 'green' ? 'bg-green-100 text-green-800' :
+                overallGrade.color === 'blue' ? 'bg-blue-100 text-blue-800' :
+                overallGrade.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
+                overallGrade.color === 'orange' ? 'bg-orange-100 text-orange-800' :
+                'bg-red-100 text-red-800'
+              }`}>
                 {overallGrade.grade}
               </div>
 
@@ -382,8 +412,20 @@ export default function Calculator() {
                 <div key={key} className="rounded-2xl bg-white p-6 shadow-md ring-1 ring-gray-100">
                   <div className="grid md:grid-cols-4 gap-6 items-center">
                     <div className="flex items-center gap-3">
-                      <div className={`flex items-center justify-center w-10 h-10 bg-${metric.color === 'green' ? 'green' : metric.color === 'blue' ? 'blue' : metric.color === 'yellow' ? 'yellow' : 'red'}-100 rounded-xl`}>
-                        <Icon className={`w-5 h-5 text-${metric.color === 'green' ? 'green' : metric.color === 'blue' ? 'blue' : metric.color === 'yellow' ? 'yellow' : 'red'}-600`} />
+                      <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+                        metric.color === 'green' ? 'bg-green-100' :
+                        metric.color === 'blue' ? 'bg-blue-100' :
+                        metric.color === 'yellow' ? 'bg-yellow-100' :
+                        metric.color === 'orange' ? 'bg-orange-100' :
+                        'bg-red-100'
+                      }`}>
+                        <Icon className={`w-5 h-5 ${
+                          metric.color === 'green' ? 'text-green-600' :
+                          metric.color === 'blue' ? 'text-blue-600' :
+                          metric.color === 'yellow' ? 'text-yellow-600' :
+                          metric.color === 'orange' ? 'text-orange-600' :
+                          'text-red-600'
+                        }`} />
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">{title}</h3>
