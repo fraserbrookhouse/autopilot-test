@@ -6,7 +6,10 @@ export default function Home() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    setCount(c => c + 1)
+    const stored = parseInt(localStorage.getItem('visitCount') || '0', 10)
+    const newCount = stored + 1
+    localStorage.setItem('visitCount', String(newCount))
+    setCount(newCount)
   }, [])
 
   return (
@@ -15,7 +18,7 @@ export default function Home() {
       <p>This project was set up by the project-autopilot skill.</p>
       <p style={{ marginTop: '1rem' }}>You've visited this page {count} times.</p>
       <button
-        onClick={() => setCount(0)}
+        onClick={() => { localStorage.removeItem('visitCount'); setCount(0) }}
         style={{ marginTop: '0.5rem', padding: '0.4rem 1rem', cursor: 'pointer' }}
       >
         Reset
