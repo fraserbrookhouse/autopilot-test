@@ -395,7 +395,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              <h3 className="text-xl font-semibold text-white mb-4">Social Value Portal</h3>
+              {/* Logo with white background pill for dark background visibility */}
+              <div className="inline-block rounded-full bg-white px-4 py-2 mb-4 shadow-lg ring-1 ring-gray-100 transition-all hover:shadow-xl hover:-translate-y-0.5">
+                <img
+                  src="/logo.svg"
+                  alt="Social Value Portal"
+                  className="h-6 md:h-8 w-auto"
+                />
+              </div>
               <p className="text-gray-400 leading-relaxed mb-6 max-w-md">
                 Helping UK organisations measure, report, and maximise social value to win
                 public sector contracts and create lasting community impact.
