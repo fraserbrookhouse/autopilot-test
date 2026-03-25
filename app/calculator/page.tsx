@@ -191,12 +191,16 @@ export default function Calculator() {
           <div className="relative">
             <input
               type="number"
-              value={value}
-              onChange={(e) => onChange(Number(e.target.value))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              value={value || ''}
+              onChange={(e) => {
+                const val = e.target.value === '' ? 0 : Number(e.target.value)
+                onChange(val)
+              }}
+              className="w-full px-4 py-3 pr-16 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               min="0"
+              placeholder="0"
             />
-            <span className="absolute right-3 top-3 text-gray-500 text-sm">{unit}</span>
+            <span className="absolute right-4 top-3 text-gray-500 text-sm pointer-events-none">{unit}</span>
           </div>
           <p className="text-xs text-gray-500 mt-1">{description}</p>
         </div>
@@ -257,7 +261,7 @@ export default function Calculator() {
               Back to Home
             </Link>
 
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-8">
               <CalculatorIcon className="w-8 h-8 text-white" />
             </div>
 
