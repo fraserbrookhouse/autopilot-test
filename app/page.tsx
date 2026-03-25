@@ -7,8 +7,10 @@ import {
   Award,
   BookOpen,
   Target,
-  ArrowRight
+  ArrowRight,
+  Calculator
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -36,9 +38,13 @@ export default function Home() {
               <button className="rounded-full bg-white px-8 py-4 text-sm font-semibold text-blue-600 shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
                 Get Started Today
               </button>
-              <button className="rounded-full border-2 border-blue-200 px-8 py-4 text-sm font-semibold text-white transition-all hover:bg-blue-200 hover:text-blue-600">
-                Watch Demo
-              </button>
+              <Link
+                href="/calculator"
+                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-blue-200 px-8 py-4 text-sm font-semibold text-white transition-all hover:bg-blue-200 hover:text-blue-600"
+              >
+                <Calculator className="w-4 h-4" />
+                Try the Calculator
+              </Link>
             </div>
           </div>
         </div>
@@ -95,6 +101,62 @@ export default function Home() {
                 Identify opportunities to increase your social impact while delivering
                 better outcomes for communities and your business.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Calculator Feature Section */}
+      <section className="py-20 md:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                See How Social Value Scoring Works
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                Our interactive calculator demonstrates exactly how social value metrics translate
+                to tender scores. Input your commitments and see real-time calculations with
+                step-by-step breakdowns.
+              </p>
+              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                Understanding the weighting of different metrics — from carbon reduction to local
+                employment — helps you optimize your social value strategy and maximize your
+                competitive advantage.
+              </p>
+              <Link
+                href="/calculator"
+                className="inline-flex items-center gap-3 rounded-full bg-blue-600 px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <Calculator className="w-5 h-5" />
+                Try the Calculator
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-8 shadow-md ring-1 ring-gray-100">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-6">
+                  <Calculator className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                  Interactive Calculator
+                </h3>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="rounded-xl bg-white p-4 shadow-sm">
+                    <div className="text-2xl font-bold text-blue-600">6</div>
+                    <div className="text-sm text-gray-600">Key Metrics</div>
+                  </div>
+                  <div className="rounded-xl bg-white p-4 shadow-sm">
+                    <div className="text-2xl font-bold text-green-600">Live</div>
+                    <div className="text-sm text-gray-600">Updates</div>
+                  </div>
+                </div>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Input your social value commitments and instantly see how they translate
+                  to tender scores, complete with visual indicators and detailed explanations.
+                </p>
+              </div>
             </div>
           </div>
         </div>
