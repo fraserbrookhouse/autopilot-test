@@ -263,7 +263,6 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           allowed_bots: "claude[bot]"
-          use_sticky_comment: true
           prompt: |
             Review this PR for:
             1. Correctness — does the code do what the PR description says?
@@ -271,12 +270,44 @@ jobs:
             3. Performance — any obvious N+1 queries, memory leaks, or unnecessary re-renders?
             4. Style — does it follow the patterns in CLAUDE.md?
 
-            Be concise. Use inline comments for specific issues.
-            If everything looks good, say so briefly — don't invent problems.
+            Be concise. If everything looks good, say so briefly — don't invent problems.
           claude_args: |
             --max-turns 10
             --model claude-sonnet-4-20250514
             --allowedTools "Bash(git diff *),Bash(git log *),Read,Glob,Grep"
+
+      - name: Post review comment
+        if: success() && steps.claude-review.outputs.execution_file
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const execFile = '${{ steps.claude-review.outputs.execution_file }}';
+            if (!fs.existsSync(execFile)) return;
+            const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
+            // Find Claude's final assistant response (the review)
+            let reviewText = '';
+            for (const msg of log) {
+              if (msg.type === 'assistant' && msg.message && msg.message.content) {
+                // Get the last assistant message with text content
+                const textBlocks = msg.message.content.filter(b => b.type === 'text');
+                if (textBlocks.length > 0) {
+                  reviewText = textBlocks.map(b => b.text).join('\n');
+                }
+              }
+            }
+            if (!reviewText) {
+              console.log('No review text found in execution log');
+              return;
+            }
+            const body = `## Code Review\n\n${reviewText}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
+            console.log('Posted review comment');
 
       - name: Report cost
         if: always() && steps.claude-review.outputs.execution_file
