@@ -83,13 +83,21 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { execSync } = require('child_process');
-            // Get the current branch name
-            const branch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
-            if (branch === 'main' || branch === 'master') {
-              console.log('On default branch, skipping PR creation');
+            const issue = context.payload.issue;
+            const issueNum = issue.number;
+            // Find the branch Claude pushed — matches pattern claude/issue-N-*
+            const branches = await github.rest.repos.listBranches({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const branch = branches.data
+              .map(b => b.name)
+              .find(name => name.startsWith(`claude/issue-${issueNum}-`));
+            if (!branch) {
+              console.log(`No claude branch found for issue #${issueNum}`);
               return;
             }
+            console.log(`Found branch: ${branch}`);
             // Check if a PR already exists for this branch
             const existing = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -101,9 +109,8 @@ jobs:
               console.log(`PR already exists: #${existing.data[0].number}`);
               return;
             }
-            // Build PR body from issue
-            const issue = context.payload.issue;
-            const prBody = `Implements the feature described in #${issue.number}.\n\nCloses #${issue.number}\n\nGenerated with [Claude Code](https://claude.ai/code)`;
+            // Create the PR
+            const prBody = `Implements the feature described in #${issueNum}.\n\nCloses #${issueNum}\n\nGenerated with [Claude Code](https://claude.ai/code)`;
             const pr = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
