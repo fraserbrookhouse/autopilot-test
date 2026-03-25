@@ -181,10 +181,13 @@ export default function Home() {
                 to environmental benefits, are winning more contracts and building stronger
                 community relationships.
               </p>
-              <div className="flex items-center gap-3 text-blue-600 font-semibold">
+              <Link
+                href="/social-value-requirements"
+                className="inline-flex items-center gap-3 text-blue-600 font-semibold transition-colors hover:text-blue-700"
+              >
                 <span>Learn about social value requirements</span>
                 <ArrowRight className="w-5 h-5" />
-              </div>
+              </Link>
             </div>
 
             <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-8 shadow-md ring-1 ring-gray-100">
