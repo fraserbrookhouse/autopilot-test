@@ -80,6 +80,7 @@ jobs:
             if (!fs.existsSync(execFile)) return;
             const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
             let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            let model = 'unknown';
             for (const msg of log) {
               if (msg.usage) {
                 inputTokens += msg.usage.input_tokens || 0;
@@ -87,15 +88,21 @@ jobs:
                 cacheRead += msg.usage.cache_read_input_tokens || 0;
                 cacheCreation += msg.usage.cache_creation_input_tokens || 0;
               }
-              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+              if (msg.model && model === 'unknown') model = msg.model;
             }
-            // Sonnet pricing: $3/M input, $15/M output, $0.30/M cache read, $3.75/M cache write
-            const inputCost = (inputTokens / 1_000_000) * 3;
-            const outputCost = (outputTokens / 1_000_000) * 15;
-            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
-            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            // Dynamic pricing based on model
+            const pricing = {
+              'sonnet': { input: 3, output: 15, cacheRead: 0.30, cacheWrite: 3.75 },
+              'opus':   { input: 15, output: 75, cacheRead: 1.50, cacheWrite: 18.75 },
+              'haiku':  { input: 0.80, output: 4, cacheRead: 0.08, cacheWrite: 1 },
+            };
+            const tier = model.includes('opus') ? 'opus' : model.includes('haiku') ? 'haiku' : 'sonnet';
+            const p = pricing[tier];
+            const inputCost = (inputTokens / 1_000_000) * p.input;
+            const outputCost = (outputTokens / 1_000_000) * p.output;
+            const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const model = process.env.MODEL_USED || 'unknown';
             const body = `**💰 Claude Run Cost Report** (develop)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
@@ -150,6 +157,7 @@ jobs:
             if (!fs.existsSync(execFile)) return;
             const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
             let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            let model = 'unknown';
             for (const msg of log) {
               if (msg.usage) {
                 inputTokens += msg.usage.input_tokens || 0;
@@ -157,14 +165,20 @@ jobs:
                 cacheRead += msg.usage.cache_read_input_tokens || 0;
                 cacheCreation += msg.usage.cache_creation_input_tokens || 0;
               }
-              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+              if (msg.model && model === 'unknown') model = msg.model;
             }
-            const inputCost = (inputTokens / 1_000_000) * 3;
-            const outputCost = (outputTokens / 1_000_000) * 15;
-            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
-            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            const pricing = {
+              'sonnet': { input: 3, output: 15, cacheRead: 0.30, cacheWrite: 3.75 },
+              'opus':   { input: 15, output: 75, cacheRead: 1.50, cacheWrite: 18.75 },
+              'haiku':  { input: 0.80, output: 4, cacheRead: 0.08, cacheWrite: 1 },
+            };
+            const tier = model.includes('opus') ? 'opus' : model.includes('haiku') ? 'haiku' : 'sonnet';
+            const p = pricing[tier];
+            const inputCost = (inputTokens / 1_000_000) * p.input;
+            const outputCost = (outputTokens / 1_000_000) * p.output;
+            const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const model = process.env.MODEL_USED || 'unknown';
             const body = `**💰 Claude Run Cost Report** (respond)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
@@ -204,6 +218,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_bots: "claude[bot]"
           use_sticky_comment: true
           prompt: |
             Review this PR for:
@@ -229,6 +244,7 @@ jobs:
             if (!fs.existsSync(execFile)) return;
             const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
             let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            let model = 'unknown';
             for (const msg of log) {
               if (msg.usage) {
                 inputTokens += msg.usage.input_tokens || 0;
@@ -236,14 +252,20 @@ jobs:
                 cacheRead += msg.usage.cache_read_input_tokens || 0;
                 cacheCreation += msg.usage.cache_creation_input_tokens || 0;
               }
-              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+              if (msg.model && model === 'unknown') model = msg.model;
             }
-            const inputCost = (inputTokens / 1_000_000) * 3;
-            const outputCost = (outputTokens / 1_000_000) * 15;
-            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
-            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            const pricing = {
+              'sonnet': { input: 3, output: 15, cacheRead: 0.30, cacheWrite: 3.75 },
+              'opus':   { input: 15, output: 75, cacheRead: 1.50, cacheWrite: 18.75 },
+              'haiku':  { input: 0.80, output: 4, cacheRead: 0.08, cacheWrite: 1 },
+            };
+            const tier = model.includes('opus') ? 'opus' : model.includes('haiku') ? 'haiku' : 'sonnet';
+            const p = pricing[tier];
+            const inputCost = (inputTokens / 1_000_000) * p.input;
+            const outputCost = (outputTokens / 1_000_000) * p.output;
+            const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const model = process.env.MODEL_USED || 'unknown';
             const body = `**💰 Claude Run Cost Report** (review)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
@@ -309,6 +331,7 @@ jobs:
             if (!fs.existsSync(execFile)) return;
             const log = JSON.parse(fs.readFileSync(execFile, 'utf8'));
             let inputTokens = 0, outputTokens = 0, cacheRead = 0, cacheCreation = 0;
+            let model = 'unknown';
             for (const msg of log) {
               if (msg.usage) {
                 inputTokens += msg.usage.input_tokens || 0;
@@ -316,14 +339,20 @@ jobs:
                 cacheRead += msg.usage.cache_read_input_tokens || 0;
                 cacheCreation += msg.usage.cache_creation_input_tokens || 0;
               }
-              if (msg.model && !process.env.MODEL_USED) process.env.MODEL_USED = msg.model;
+              if (msg.model && model === 'unknown') model = msg.model;
             }
-            const inputCost = (inputTokens / 1_000_000) * 3;
-            const outputCost = (outputTokens / 1_000_000) * 15;
-            const cacheReadCost = (cacheRead / 1_000_000) * 0.30;
-            const cacheCreationCost = (cacheCreation / 1_000_000) * 3.75;
+            const pricing = {
+              'sonnet': { input: 3, output: 15, cacheRead: 0.30, cacheWrite: 3.75 },
+              'opus':   { input: 15, output: 75, cacheRead: 1.50, cacheWrite: 18.75 },
+              'haiku':  { input: 0.80, output: 4, cacheRead: 0.08, cacheWrite: 1 },
+            };
+            const tier = model.includes('opus') ? 'opus' : model.includes('haiku') ? 'haiku' : 'sonnet';
+            const p = pricing[tier];
+            const inputCost = (inputTokens / 1_000_000) * p.input;
+            const outputCost = (outputTokens / 1_000_000) * p.output;
+            const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
+            const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const model = process.env.MODEL_USED || 'unknown';
             const body = `**💰 Claude Run Cost Report** (fix-ci)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
