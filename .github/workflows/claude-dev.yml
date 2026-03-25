@@ -72,15 +72,47 @@ jobs:
             - Responsive design with md: and lg: breakpoints
             - Lucide React icons instead of emoji
 
-            After implementing and committing your changes:
-            1. Push your branch
-            2. Create a pull request using the gh CLI or git commands
-            3. Reference the issue in the PR body with "Closes #<issue_number>"
-            Always create the PR — do not leave it for the user to create manually.
+            After implementing, commit and push your changes. The PR will be created automatically by a later workflow step — do NOT create a PR yourself.
           claude_args: |
             --max-turns 25
             --model claude-sonnet-4-20250514
-            --allowedTools "Bash(git *),Bash(npm *),Bash(npx *),Bash(node *),Bash(cat *),Bash(ls *),Bash(find *),Bash(gh *),Edit,Read,Write,Glob,Grep"
+            --allowedTools "Bash(git *),Bash(npm *),Bash(npx *),Bash(node *),Bash(cat *),Bash(ls *),Bash(find *),Edit,Read,Write,Glob,Grep"
+
+      - name: Auto-create PR
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            // Get the current branch name
+            const branch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+            if (branch === 'main' || branch === 'master') {
+              console.log('On default branch, skipping PR creation');
+              return;
+            }
+            // Check if a PR already exists for this branch
+            const existing = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${branch}`,
+              state: 'open'
+            });
+            if (existing.data.length > 0) {
+              console.log(`PR already exists: #${existing.data[0].number}`);
+              return;
+            }
+            // Build PR body from issue
+            const issue = context.payload.issue;
+            const prBody = `Implements the feature described in #${issue.number}.\n\nCloses #${issue.number}\n\nGenerated with [Claude Code](https://claude.ai/code)`;
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `feat: ${issue.title.toLowerCase()}`,
+              body: prBody,
+              head: branch,
+              base: 'main'
+            });
+            console.log(`Created PR #${pr.data.number}: ${pr.data.html_url}`);
 
       - name: Report cost
         if: always() && steps.claude-develop.outputs.execution_file
@@ -115,7 +147,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (develop)\n\n` +
+            const body = `**💰 Claude Run Cost Report** (develop)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
@@ -191,7 +223,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (respond)\n\n` +
+            const body = `**💰 Claude Run Cost Report** (respond)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
@@ -278,7 +310,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (review)\n\n` +
+            const body = `**💰 Claude Run Cost Report** (review)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
@@ -365,7 +397,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (fix-ci)\n\n` +
+            const body = `**💰 Claude Run Cost Report** (fix-ci)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
