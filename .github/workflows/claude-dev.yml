@@ -60,7 +60,19 @@ jobs:
           label_trigger: "claude-dev"
           track_progress: true
           prompt: |
-            Implement the feature described in this issue. After implementing and committing your changes:
+            Implement the feature described in this issue. Read CLAUDE.md first for project context and design standards.
+
+            DESIGN QUALITY: Build production-quality UI, not wireframes. Use Tailwind CSS classes (never inline styles). Every page must have:
+            - Visual depth: cards with shadows (shadow-md+), hover effects (hover:shadow-xl hover:-translate-y-1), transitions
+            - Hero sections with gradient backgrounds and decorative blur elements, not plain solid colors
+            - Typography hierarchy: large bold headings (text-4xl md:text-5xl font-extrabold), relaxed body text
+            - Generous whitespace: section padding py-20 md:py-28, max-w-7xl mx-auto px-6
+            - Alternating section backgrounds (white / bg-gray-50)
+            - Polished buttons with shadows, rounded-full or rounded-xl, and hover states
+            - Responsive design with md: and lg: breakpoints
+            - Lucide React icons instead of emoji
+
+            After implementing and committing your changes:
             1. Push your branch
             2. Create a pull request using the gh CLI or git commands
             3. Reference the issue in the PR body with "Closes #<issue_number>"
@@ -103,7 +115,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**💰 Claude Run Cost Report** (develop)\n\n` +
+            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (develop)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
@@ -179,7 +191,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**💰 Claude Run Cost Report** (respond)\n\n` +
+            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (respond)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
@@ -266,7 +278,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**💰 Claude Run Cost Report** (review)\n\n` +
+            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (review)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
@@ -353,7 +365,7 @@ jobs:
             const cacheReadCost = (cacheRead / 1_000_000) * p.cacheRead;
             const cacheCreationCost = (cacheCreation / 1_000_000) * p.cacheWrite;
             const totalCost = inputCost + outputCost + cacheReadCost + cacheCreationCost;
-            const body = `**💰 Claude Run Cost Report** (fix-ci)\n\n` +
+            const body = `**\uD83D\uDCB0 Claude Run Cost Report** (fix-ci)\n\n` +
               `| Metric | Value |\n|--------|-------|\n` +
               `| Model | \`${model}\` |\n` +
               `| Input tokens | ${inputTokens.toLocaleString()} |\n` +
