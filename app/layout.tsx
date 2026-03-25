@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Autopilot Test',
-  description: 'A test project for the project-autopilot skill',
+  title: 'Social Value Portal',
+  description: 'Measure, report and maximise your social value. Helping UK organisations win public sector contracts and demonstrate real community impact.',
 }
 
 export default function RootLayout({
