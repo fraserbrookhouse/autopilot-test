@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Calculator as CalculatorIcon,
   TrendingUp,
@@ -15,9 +15,13 @@ import {
   Target,
   Award,
   BarChart3,
+  Star,
+  Gift,
+  X,
   type LucideIcon
 } from 'lucide-react'
 import Link from 'next/link'
+import confetti from 'canvas-confetti'
 
 interface MetricInputs {
   localEmployment: number
@@ -54,6 +58,16 @@ export default function Calculator() {
     smeSubcontracting: 30,
     volunteerHours: 200
   })
+
+  // Konami code easter egg state
+  const [keySequence, setKeySequence] = useState<string[]>([])
+  const [showModal, setShowModal] = useState(false)
+
+  const konamiCode = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+    'KeyB', 'KeyA'
+  ]
 
   // Scoring logic - realistic but simplified for educational purposes
   const calculateMetricScore = (value: number, type: string): MetricScore => {
@@ -140,6 +154,121 @@ export default function Calculator() {
 
   const updateInput = (key: keyof MetricInputs, value: number) => {
     setInputs(prev => ({ ...prev, [key]: value }))
+  }
+
+  // Confetti animation function
+  const triggerConfetti = useCallback(() => {
+    const count = 200
+    const defaults = {
+      origin: { y: 0.7 }
+    }
+
+    function fire(particleRatio: number, opts: any) {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio)
+      })
+    }
+
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    })
+    fire(0.2, {
+      spread: 60,
+    })
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8
+    })
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2
+    })
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    })
+  }, [])
+
+  // Handle keyboard input for Konami code
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    const key = event.code
+
+    setKeySequence(prevSequence => {
+      const newSequence = [...prevSequence, key].slice(-konamiCode.length)
+
+      // Check if the sequence matches the Konami code
+      if (newSequence.length === konamiCode.length) {
+        const isMatch = newSequence.every((keyCode, index) => keyCode === konamiCode[index])
+
+        if (isMatch) {
+          triggerConfetti()
+          setShowModal(true)
+          return [] // Reset sequence after successful match
+        }
+      }
+
+      return newSequence
+    })
+  }, [triggerConfetti])
+
+  // Set up keyboard event listener
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleKeyDown])
+
+  // Easter egg modal component
+  const EasterEggModal = () => {
+    if (!showModal) return null
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="relative bg-white rounded-2xl p-8 md:p-12 shadow-2xl ring-1 ring-gray-100 max-w-md w-full transform transition-all">
+          <button
+            onClick={() => setShowModal(false)}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl mb-6">
+              <Star className="w-8 h-8 text-white" />
+            </div>
+
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-4">
+              You found the secret!
+            </h2>
+
+            <p className="text-lg text-gray-600 leading-relaxed mb-8">
+              Congratulations on discovering our hidden easter egg! As a reward for your curiosity and gaming skills, enjoy a free month of our premium platform.
+            </p>
+
+            <div className="space-y-4">
+              <button className="w-full rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
+                <Gift className="w-4 h-4 inline mr-2" />
+                Claim Your Free Month
+              </button>
+
+              <button
+                onClick={() => setShowModal(false)}
+                className="w-full rounded-full border-2 border-gray-300 px-8 py-4 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50"
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const MetricCard = ({
@@ -246,6 +375,9 @@ export default function Calculator() {
 
   return (
     <main className="min-h-screen bg-white">
+      {/* Easter egg modal */}
+      <EasterEggModal />
+
       {/* Header */}
       <section className="relative py-20 md:py-28 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden">
         {/* Decorative Elements */}
